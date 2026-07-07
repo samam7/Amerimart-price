@@ -21,10 +21,10 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><div><div class="brand">Amerimart Price Check</div><div class="sub">Scan UPC or product name → check price → save new price</div></div><div class="pill" id="countPill">Loading…</div></div>
+  <div class="top"><div><div class="brand">Amerimart Price Check</div><div class="sub">Scan barcode exact item · name search shows list</div></div><div class="pill" id="countPill">Loading…</div></div>
   <div class="card">
-    <label>Scan barcode or search product name</label>
-    <div class="searchbox"><input id="upcInput" inputmode="search" autocomplete="off" placeholder="Scan UPC or type product name" onkeydown="if(event.key==='Enter') lookup()" oninput="liveSearchInput()"/><button onclick="lookup()">Search</button></div>
+    <label>Scan barcode or type product name</label>
+    <div class="searchbox"><input id="upcInput" inputmode="search" autocomplete="off" placeholder="Scan UPC for exact item or type name for list" onkeydown="if(event.key==='Enter') lookup()" oninput="liveSearchInput()"/><button onclick="lookup()">Search</button></div>
     <div class="row"><button class="btn2" onclick="startScanner()">Open Camera Scanner</button><button class="btn2" onclick="stopScanner()">Stop Camera</button></div>
     <div id="scannerBox" class="hidden"><div class="scanPreview" id="quaggaViewport"><video id="video" playsinline muted autoplay></video><div class="scanLine"></div></div><div class="scanReadout" id="lastScan">Last scan: none</div><div class="cameraStatus" id="scanNote">Tap Open Camera Scanner, allow camera, then point at the barcode.</div></div>
   </div>
@@ -101,20 +101,22 @@ function lookup(code){
   const input=document.getElementById('upcInput');
   const val=String(code||input.value||'').trim();
   const raw=val.replace(/[^0-9]/g,'');
+  const hasLetters=/[a-zA-Z]/.test(val);
   const box=document.getElementById('result'); box.classList.remove('hidden');
 
-  // Barcode / UPC exact search first. Includes with/without leading zero.
-  if(raw.length >= 4){
+  // SCAN / BARCODE MODE:
+  // If the search is numbers only, return ONLY the exact matching product.
+  // No result list is shown for scanned barcodes.
+  if(raw.length >= 6 && !hasLetters){
     const p=upcVariants(raw).map(v=>byUpc.get(v)).find(Boolean);
     if(p){ showProduct(p); return; }
-
-    // If no exact match, show close UPC matches instead of dead end.
-    const close=closestUpcMatches(raw);
-    if(close.length===1){ showProduct(close[0]); return; }
-    if(close.length>1){ showMatches(close, val, 'Closest UPC Matches'); return; }
+    current=null;
+    box.innerHTML=`<div class="resultTitle">Barcode Not Found</div><div class="muted">Scanned/Search: ${escapeHtml(val||'(empty)')}</div><div class="warn">This barcode was not found as an exact UPC in the Excel pricebook. For a product list, search by name like <b>Zyn</b>, <b>Tito</b>, <b>Monster</b>, or <b>Marlboro</b>.</div>`;
+    return;
   }
 
-  // Product name search. Every word must match description/department/UPC.
+  // NAME SEARCH MODE:
+  // If the search contains product-name text, show a full editable result list.
   const q=val.toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
   if(q.length >= 2){
     const words=q.split(' ').filter(Boolean);
@@ -129,13 +131,13 @@ function lookup(code){
       if(desc.startsWith(q)) score+=50;
       for(const w of words){ if(desc.includes(w)) score+=15; if(dept.includes(w)) score+=5; if(upc.includes(w)) score+=5; }
       return [score,p];
-    }).filter(Boolean).sort((a,b)=>b[0]-a[0]).map(x=>x[1]).slice(0,75);
+    }).filter(Boolean).sort((a,b)=>b[0]-a[0]).map(x=>x[1]).slice(0,100);
     if(matches.length===1){ showProduct(matches[0]); return; }
     if(matches.length>1){ showMatches(matches, val, 'Products Found'); return; }
   }
 
   current=null;
-  box.innerHTML=`<div class="resultTitle">Not Found</div><div class="muted">Search: ${escapeHtml(val||'(empty)')}</div><div class="warn">No match found. Try scanning again, typing only part of the UPC, or search by product name like <b>Zyn Peppermint</b>, <b>Tito</b>, <b>Monster</b>, or <b>Marlboro</b>.</div>`;
+  box.innerHTML=`<div class="resultTitle">Not Found</div><div class="muted">Search: ${escapeHtml(val||'(empty)')}</div><div class="warn">No match found. Scan a barcode for one exact item, or type a product name like <b>Zyn</b>, <b>Tito</b>, <b>Monster</b>, or <b>Marlboro</b> to see a list.</div>`;
 }
 function showProduct(p){
   current=p; document.getElementById('upcInput').value=p.upc;
