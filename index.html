@@ -166,7 +166,7 @@ let current=null, stream=null, timer=null;
 let currentMatches=[];
 function money(n){ if(n===null||n===undefined||n==='') return ''; const x=Number(n); return isNaN(x)?String(n):'$'+x.toFixed(2); }
 function getChanges(){ try{return JSON.parse(localStorage.getItem('priceChanges')||'[]')}catch{return []} }
-function setChanges(a){ localStorage.setItem('priceChanges',JSON.stringify(a)); renderManagerDashboard(); 
+function setChanges(a){ localStorage.setItem('priceChanges',JSON.stringify(a)); renderChanges(); renderManagerDashboard(); }
 function showPage(page){
   const pages=['home','price','planogram','inventory','invoice','tasks','cigarette','reports','settings'];
   pages.forEach(name=>{
@@ -195,22 +195,22 @@ function renderPlanogram(){
 }
 function savePlanogram(){
   for(let d=1; d<=6; d++){ for(let s=1; s<=7; s++){ const el=document.getElementById(`plan_${d}_${s}`); if(el) localStorage.setItem(planKey(d,s), el.value.trim()); }}
-  showToast('Cooler planogram saved');
+  toast('Cooler planogram saved');
 }
 function clearDoor(d){
   if(!confirm(`Clear Door ${d}?`)) return;
   for(let s=1; s<=7; s++){localStorage.removeItem(planKey(d,s));}
-  renderPlanogram(); showToast(`Door ${d} cleared`);
+  renderPlanogram(); toast(`Door ${d} cleared`);
 }
 function copyDoor(d){
   let lines=[];
   for(let s=1; s<=7; s++){ const el=document.getElementById(`plan_${d}_${s}`); lines.push(`Door ${d} Shelf ${s}: ${(el&&el.value)||''}`); }
-  navigator.clipboard?.writeText(lines.join('\n')); showToast(`Door ${d} copied`);
+  navigator.clipboard?.writeText(lines.join('\n')); toast(`Door ${d} copied`);
 }
 function clearPlanogram(){
   if(!confirm('Clear the full cooler planogram?')) return;
   for(let d=1; d<=6; d++){ for(let s=1; s<=7; s++){ localStorage.removeItem(planKey(d,s)); }}
-  renderPlanogram(); showToast('Planogram cleared');
+  renderPlanogram(); toast('Planogram cleared');
 }
 function exportPlanogramCSV(){
   savePlanogram();
@@ -222,7 +222,7 @@ function exportPlanogramCSV(){
 }
 
 renderChanges();
-renderPlanogram(); }
+renderPlanogram();
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),1800); }
 
 let liveSearchTimer=null;
