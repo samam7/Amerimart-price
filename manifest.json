@@ -1,15 +1,20 @@
 {
-  "name": "Amerimart Price Check",
-  "short_name": "Price Check",
-  "description": "Scan UPC, check Excel price, save new prices, and export change list.",
+  "name": "Amerimart Store Manager",
+  "short_name": "Amerimart",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#08111f",
+  "theme_color": "#08111f",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
