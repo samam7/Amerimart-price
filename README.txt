@@ -16,3 +16,9 @@ New layout:
 - Settings
 
 Pricebook is embedded in index.html.
+
+
+V2.1 changes:
+- Cooler shelf positions stay in one horizontal row.
+- Tap any product square to enlarge/edit details, image, UPC, price.
+- Added camera scanner inside Cooler Planogram position editor.

@@ -44,6 +44,37 @@ button{width:100%;padding:15px 16px;border-radius:16px;border:0;background:linea
 .table{overflow:auto;border-radius:18px;border:1px solid var(--line)}table{width:100%;border-collapse:collapse;min-width:680px}th,td{padding:12px;border-bottom:1px solid #22304a;text-align:left}th{color:#c7d2fe;background:#111827}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.doors{grid-template-columns:1fr}.dashStats{grid-template-columns:repeat(2,1fr)}.bottomBar{display:block}.app{padding-bottom:96px}.facingGrid{grid-template-columns:repeat(4,1fr)}.searchRow{grid-template-columns:1fr}.heroRow{align-items:flex-start}.badges{display:none}}
 @media(max-width:520px){.grid{grid-template-columns:1fr}.row,.three{grid-template-columns:1fr}.tile{min-height:135px}.facingGrid{grid-template-columns:repeat(3,1fr)}h1{font-size:30px}}
+
+/* V2.1 cooler shelf row layout */
+.facingGrid{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  overflow-x:auto !important;
+  gap:10px !important;
+  padding:4px 2px 10px !important;
+  scroll-snap-type:x mandatory;
+}
+.facing{
+  min-width:128px !important;
+  height:132px !important;
+  scroll-snap-align:start;
+}
+.facing.filled{
+  min-width:150px !important;
+}
+.facing img{height:62px !important;}
+.facing .name{font-size:12px !important;}
+.shelf{padding:16px 0 !important;}
+.shelf h4{font-size:22px;margin-bottom:10px !important;}
+.modalVideoBox{display:none;overflow:hidden;border-radius:20px;border:1px solid var(--line);background:#000;margin:12px 0}
+.modalVideoBox.active{display:block}
+.modalVideoBox video{width:100%;max-height:360px;object-fit:cover;display:block}
+.smallHint{font-size:13px;color:#9fb0cb;margin:8px 0 0}
+@media(max-width:850px){
+  .facingGrid{grid-template-columns:none !important;}
+  .facing{min-width:132px !important;height:138px !important;}
+}
+
 </style>
 </head>
 <body>
@@ -116,6 +147,8 @@ button{width:100%;padding:15px 16px;border-radius:16px;border:0;background:linea
 
 <div id="planModal" class="modal"><div class="sheet">
   <h2 id="modalTitle">Edit Position</h2>
+  <div class="row"><button class="btn2" onclick="openModalScanner()">Scan Barcode for This Position</button><button class="btn2" onclick="stopModalScanner()">Stop Scan</button></div>
+  <div id="modalVideoBox" class="modalVideoBox"><video id="modalVideo" playsinline muted autoplay></video><div class="scanLine"></div><p class="smallHint" id="modalScanStatus" style="padding:12px">Camera is open. Scan product barcode.</p></div>
   <label>Search product</label><input id="modalSearch" placeholder="Search product name or UPC" oninput="modalSearchProduct()">
   <div id="modalMatches" class="results" style="margin-top:10px"></div>
   <label>Product name</label><input id="mName">
@@ -257,7 +290,7 @@ function renderDoors(){
      html+=`<div class="shelf"><h4>Shelf ${s}</h4><div class="facingGrid">`;
      for(let p=1;p<=8;p++){
        const k=key(d,s,p), it=plano[k];
-       html+=`<div class="facing ${it?'':'empty'}" onclick="editFacing(${d},${s},${p})">${it?(it.img?`<img src="${it.img}">`:'📦')+`<div class="name">${escapeHtml(shortName(it.name))}</div><div class="price">${it.price?fmt(it.price):''}</div>`:`+<br><span style="font-size:11px">D${d} S${s} P${p}</span>`}</div>`;
+       html+=`<div class="facing ${it?'filled':'empty'}" onclick="editFacing(${d},${s},${p})">${it?(it.img?`<img src="${it.img}">`:'📦')+`<div class="name">${escapeHtml(shortName(it.name))}</div><div class="price">${it.price?fmt(it.price):''}</div>`:`+<br><span style="font-size:11px">D${d} S${s} P${p}</span>`}</div>`;
      }
      html+=`</div></div>`;
    }
@@ -266,7 +299,7 @@ function renderDoors(){
  doors.innerHTML=html;
 }
 function editFacing(d,s,p){currentFacing=key(d,s,p); tempImage=''; const it=getPlano()[currentFacing]||{}; document.getElementById('modalTitle').textContent=`Door ${d} · Shelf ${s} · Position ${p}`; mName.value=it.name||''; mUpc.value=it.upc||''; mPrice.value=it.price||''; modalSearch.value=''; modalMatches.innerHTML=''; document.getElementById('planModal').classList.add('active');}
-function closeModal(){document.getElementById('planModal').classList.remove('active')}
+function closeModal(){stopModalScanner();document.getElementById('planModal').classList.remove('active')}
 function modalSearchProduct(){ const q=modalSearch.value; const list=searchProducts(q,8); modalMatches.innerHTML=list.map(p=>`<div class="product" onclick="pickModalProduct(${p.row})"><b>${escapeHtml(p.description)}</b><div class="muted">${p.upc} · ${fmt(p.retailPrice)}</div></div>`).join('');}
 function pickModalProduct(row){ const p=PRODUCTS.find(x=>x.row===row); if(!p)return; mName.value=p.description; mUpc.value=p.upc; mPrice.value=Number(p.retailPrice||0).toFixed(2); modalMatches.innerHTML='';}
 function loadFacingImage(e){ const file=e.target.files[0]; if(!file)return; const r=new FileReader(); r.onload=()=>{tempImage=r.result}; r.readAsDataURL(file);}
@@ -282,6 +315,45 @@ function downloadCSV(rows,name){ const csv=rows.map(r=>r.map(v=>`"${String(v??''
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function escapeAttr(s){return escapeHtml(s).replace(/"/g,'&quot;')}
 function shortName(s){s=String(s||''); return s.length>24?s.slice(0,22)+'…':s}
+
+let modalStream=null, modalScanTimer=null;
+async function openModalScanner(){
+ const video=document.getElementById('modalVideo'), box=document.getElementById('modalVideoBox'), status=document.getElementById('modalScanStatus');
+ box.classList.add('active');
+ try{
+   modalStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+   video.srcObject=modalStream; await video.play();
+   if('BarcodeDetector' in window){
+     const detector=new BarcodeDetector({formats:['upc_a','upc_e','ean_13','ean_8','code_128']});
+     let last='';
+     const loop=async()=>{
+       if(!modalStream) return;
+       try{
+         const codes=await detector.detect(video);
+         if(codes && codes[0]){
+           const val=clean(codes[0].rawValue); status.textContent='Last scan: '+val;
+           if(val && val!==last){
+             last=val;
+             const p=exactProductByBarcode(val);
+             if(p){ pickModalProduct(p.row); status.textContent='Found: '+p.description; }
+             else { modalSearch.value=val; modalSearchProduct(); status.textContent='Barcode not exact. Showing search results for '+val; }
+           }
+         }
+       }catch(e){}
+       modalScanTimer=requestAnimationFrame(loop);
+     }; loop();
+   }else{
+     status.textContent='Camera preview open. Type/search product if barcode does not auto-read.';
+   }
+ }catch(e){ alert('Camera failed: '+e.message+'. Open in Safari/HTTPS and allow camera.'); }
+}
+function stopModalScanner(){
+ if(modalScanTimer) cancelAnimationFrame(modalScanTimer); modalScanTimer=null;
+ if(modalStream){modalStream.getTracks().forEach(t=>t.stop());modalStream=null;}
+ const v=document.getElementById('modalVideo'); if(v)v.srcObject=null;
+ document.getElementById('modalVideoBox')?.classList.remove('active');
+}
+
 document.addEventListener('DOMContentLoaded',init);
 </script>
 </body></html>
