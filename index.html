@@ -19,13 +19,51 @@
 .matchList{display:grid;gap:10px;margin-top:12px}.matchEdit{border:1px solid var(--line);border-radius:14px;padding:12px;background:#0b1220}.matchTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.matchName{font-weight:900}.matchMeta{font-size:12px;color:var(--muted);margin-top:4px}.matchPriceRow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:10px}.matchPriceRow label{font-size:11px;margin:0;color:#bae6fd}.matchPriceRow input{padding:12px;font-size:16px}.matchPriceRow button{padding:12px 14px}.saveAll{margin-top:12px;background:var(--ok);color:#052e16}.scanPreview{position:relative;width:100%;min-height:280px;background:#000;border-radius:14px;overflow:hidden;margin-top:10px}.scanPreview video,.scanPreview canvas{width:100%!important;min-height:280px!important;max-height:380px!important;object-fit:cover!important;border-radius:14px;display:block!important}.scanLine{position:absolute;left:8%;right:8%;top:50%;height:3px;background:#14b8a6;box-shadow:0 0 18px #14b8a6;z-index:5}.scanReadout{font-size:13px;color:#ccfbf1;margin-top:8px}.cameraStatus{background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:8px;margin-top:8px;color:#bfdbfe;font-size:13px}@media(max-width:520px){.matchPriceRow{grid-template-columns:1fr 1fr}.matchPriceRow button{grid-column:1/3}}
 
 .pageTabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 14px}.tabBtn{background:#1e293b;color:#e2e8f0;border:1px solid #475569;margin:0}.tabBtn.active{background:var(--accent);color:#042f2e}.planHead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.doorGrid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px}.doorCard{border:1px solid var(--line);border-radius:16px;background:#0b1220;padding:12px}.doorTitle{font-weight:900;font-size:18px;margin-bottom:8px;color:#ccfbf1}.shelfRow{display:grid;grid-template-columns:68px 1fr;gap:8px;align-items:center;margin:8px 0}.shelfLabel{color:#bae6fd;font-size:13px;font-weight:800}.shelfRow input{padding:11px;font-size:15px}.planActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.planActions button{margin-top:0}.doorTools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.doorTools button{font-size:14px;padding:10px;margin:0}@media(min-width:760px){.doorGrid{grid-template-columns:1fr 1fr}}@media(max-width:520px){.pageTabs{grid-template-columns:1fr}.shelfRow{grid-template-columns:58px 1fr}.planActions{grid-template-columns:1fr}}
+
+/* Professional Amerimart dashboard layout */
+.appShell{max-width:980px;margin:auto;padding:calc(12px + env(safe-area-inset-top)) 14px calc(26px + env(safe-area-inset-bottom));}
+.hero{position:relative;overflow:hidden;border:1px solid rgba(20,184,166,.28);border-radius:26px;padding:20px;margin:6px 0 14px;background:radial-gradient(circle at top right,rgba(20,184,166,.24),transparent 35%),linear-gradient(135deg,rgba(15,23,42,.98),rgba(2,6,23,.92));box-shadow:0 24px 60px rgba(0,0,0,.36)}
+.heroTop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.appTitle{font-size:30px;font-weight:950;letter-spacing:-.04em}.appSub{color:#cbd5e1;font-size:14px;line-height:1.45;margin-top:4px}.statusPills{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.statusPills .pill{font-size:12px;padding:8px 12px;background:rgba(20,184,166,.15)}
+.navChips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;margin-bottom:6px}.navChips button{white-space:nowrap;width:auto;margin:0;padding:10px 14px;border-radius:999px;background:#111827;color:#cbd5e1;border:1px solid #334155;font-size:14px}.navChips button.active{background:linear-gradient(135deg,#14b8a6,#22d3ee);color:#042f2e;border-color:transparent;box-shadow:0 8px 24px rgba(20,184,166,.22)}
+.dashboardGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.dashTile{border:1px solid #334155;border-radius:22px;padding:16px;background:linear-gradient(180deg,rgba(30,41,59,.8),rgba(15,23,42,.95));box-shadow:0 12px 30px rgba(0,0,0,.28);min-height:132px;display:flex;flex-direction:column;justify-content:space-between}.dashTile:active{transform:scale(.99)}.dashIcon{font-size:30px}.dashTitle{font-size:18px;font-weight:900;margin-top:8px}.dashDesc{font-size:13px;color:#94a3b8;line-height:1.35;margin-top:4px}.dashFooter{font-size:12px;color:#99f6e4;margin-top:12px;font-weight:700}
+.sectionHeader{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:4px 0 12px}.backBtn{width:auto;margin:0;padding:10px 13px;border-radius:999px;background:#1e293b;color:#e2e8f0;border:1px solid #475569;font-size:14px}.pageTitle{font-size:26px;font-weight:950;letter-spacing:-.03em}.statsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.statCard{border:1px solid #334155;border-radius:18px;padding:14px;background:rgba(15,23,42,.82)}.statNumber{font-size:28px;font-weight:950;color:#99f6e4}.statLabel{color:#94a3b8;font-size:13px;margin-top:4px}.roleList{display:grid;gap:10px}.roleItem{display:flex;justify-content:space-between;gap:12px;border:1px solid #334155;border-radius:16px;padding:12px;background:#0b1220}.roleBadge{background:#063b37;color:#99f6e4;border:1px solid #0f766e;border-radius:999px;padding:6px 10px;font-weight:800;font-size:12px;white-space:nowrap}.placeholderBox{border:1px dashed #475569;border-radius:18px;padding:18px;background:rgba(15,23,42,.7);color:#cbd5e1;line-height:1.5}.quickActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.quickActions button{margin:0}.appPage{animation:fadeIn .18s ease}@keyframes fadeIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (min-width:760px){.dashboardGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.statsGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:26px}.appTitle{font-size:38px}}
+@media (max-width:520px){.appShell{padding-left:10px;padding-right:10px}.dashboardGrid{gap:10px}.dashTile{padding:13px;min-height:120px}.dashTitle{font-size:16px}.dashDesc{font-size:12px}.appTitle{font-size:26px}.heroTop{flex-direction:column}.statusPills{justify-content:flex-start}.quickActions{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top"><div><div class="brand">Amerimart Price Check</div><div class="sub">Scan barcode exact item · name search shows list</div></div><div class="pill" id="countPill">Loading…</div></div>
-  <div class="pageTabs"><button id="priceTab" class="tabBtn active" onclick="showPage('price')">Price Check</button><button id="planTab" class="tabBtn" onclick="showPage('planogram')">Cooler Planogram</button></div>
-  <div id="pricePage">
+<div class="wrap appShell">
+  <div class="hero">
+    <div class="heroTop">
+      <div><div class="appTitle">Amerimart Store Manager</div><div class="appSub">Price checker · cooler planogram · inventory · invoices · tasks · reports</div></div>
+      <div class="statusPills"><div class="pill" id="countPill">Loading…</div><div class="pill">Manager Mode</div></div>
+    </div>
+  </div>
+  <div class="navChips">
+    <button id="homeTab" class="active" onclick="showPage('home')">Home</button>
+    <button id="priceTab" onclick="showPage('price')">Price Checker</button>
+    <button id="planogramTab" onclick="showPage('planogram')">Cooler</button>
+    <button id="inventoryTab" onclick="showPage('inventory')">Inventory</button>
+    <button id="invoiceTab" onclick="showPage('invoice')">Invoices</button>
+    <button id="tasksTab" onclick="showPage('tasks')">Tasks</button>
+    <button id="cigaretteTab" onclick="showPage('cigarette')">Cigarette</button>
+    <button id="reportsTab" onclick="showPage('reports')">Reports</button>
+    <button id="settingsTab" onclick="showPage('settings')">Settings</button>
+  </div>
+  <div id="homePage" class="appPage">
+    <div class="dashboardGrid">
+      <div class="dashTile" onclick="showPage('price')"><div><div class="dashIcon">💲</div><div class="dashTitle">Price Checker</div><div class="dashDesc">Scan barcode or search product name. Save price changes.</div></div><div class="dashFooter">Open scanner →</div></div>
+      <div class="dashTile" onclick="showPage('planogram')"><div><div class="dashIcon">🧊</div><div class="dashTitle">Cooler Planogram</div><div class="dashDesc">6 doors × 7 shelves. Save cooler layout.</div></div><div class="dashFooter">Open cooler →</div></div>
+      <div class="dashTile" onclick="showPage('inventory')"><div><div class="dashIcon">📦</div><div class="dashTitle">Inventory</div><div class="dashDesc">Search product, UPC, department, price, cost, margin.</div></div><div class="dashFooter">Coming ready →</div></div>
+      <div class="dashTile" onclick="showPage('invoice')"><div><div class="dashIcon">🚚</div><div class="dashTitle">Invoice Scanner</div><div class="dashDesc">Manager invoice scan area for future import.</div></div><div class="dashFooter">Manager →</div></div>
+      <div class="dashTile" onclick="showPage('tasks')"><div><div class="dashIcon">📋</div><div class="dashTitle">Daily Tasks</div><div class="dashDesc">Manager task completion tracking.</div></div><div class="dashFooter">Open tasks →</div></div>
+      <div class="dashTile" onclick="showPage('cigarette')"><div><div class="dashIcon">🚬</div><div class="dashTitle">Cigarette Order</div><div class="dashDesc">Order list page for cigarettes and chew.</div></div><div class="dashFooter">Open order →</div></div>
+      <div class="dashTile" onclick="showPage('reports')"><div><div class="dashIcon">📈</div><div class="dashTitle">Manager Dashboard</div><div class="dashDesc">Price changes, cooler work, invoices, tasks.</div></div><div class="dashFooter">View reports →</div></div>
+      <div class="dashTile" onclick="showPage('settings')"><div><div class="dashIcon">⚙️</div><div class="dashTitle">Settings</div><div class="dashDesc">Role rules, export options, app information.</div></div><div class="dashFooter">Open settings →</div></div>
+    </div>
+  </div>
+  <div id="pricePage" class="hidden appPage">
+    <div class="sectionHeader"><div><div class="pageTitle">Price Checker</div><div class="sub">Barcode scan = exact product. Name search = editable product list.</div></div><button class="backBtn" onclick="showPage('home')">Home</button></div>
   <div class="card">
     <label>Scan barcode or type product name</label>
     <div class="searchbox"><input id="upcInput" inputmode="search" autocomplete="off" placeholder="Scan UPC for exact item or type name for list" onkeydown="if(event.key==='Enter') lookup()" oninput="liveSearchInput()"/><button onclick="lookup()">Search</button></div>
@@ -37,7 +75,8 @@
   <div class="card"><div class="resultTitle">Changed Prices</div><div class="muted small">This list is saved on this iPhone/browser until you clear it. Export CSV and use it to update your back-office system.</div><div id="changes"></div><div class="actionbar"><button onclick="exportCSV()">Export Change CSV</button><button class="btnDanger" onclick="clearChanges()">Clear List</button></div></div>
 
   </div>
-  <div id="planogramPage" class="hidden">
+  <div id="planogramPage" class="hidden appPage">
+    <div class="sectionHeader"><div><div class="pageTitle">Cooler Planogram</div><div class="sub">Build and save the cooler door layout.</div></div><button class="backBtn" onclick="showPage('home')">Home</button></div>
     <div class="card">
       <div class="planHead">
         <div>
@@ -53,6 +92,43 @@
       <button class="btnDanger" onclick="clearPlanogram()">Clear Planogram</button>
     </div>
     <div id="planogramGrid" class="doorGrid"></div>
+  </div>
+
+  <div id="inventoryPage" class="hidden appPage">
+    <div class="sectionHeader"><div><div class="pageTitle">Inventory</div><div class="sub">Product lookup and inventory tools.</div></div><button class="backBtn" onclick="showPage('home')">Home</button></div>
+    <div class="card"><div class="resultTitle">Inventory Search</div><div class="placeholderBox">Use the Price Checker search for now. This page is ready for inventory count, backstock location, quantity on hand, and low-stock lists.</div><div class="quickActions"><button onclick="showPage('price')">Search Products</button><button class="btn2" onclick="showPage('reports')">View Reports</button></div></div>
+  </div>
+  <div id="invoicePage" class="hidden appPage">
+    <div class="sectionHeader"><div><div class="pageTitle">Invoice Scanner</div><div class="sub">Manager only invoice scan tracking.</div></div><button class="backBtn" onclick="showPage('home')">Home</button></div>
+    <div class="card"><div class="resultTitle">Invoice Scanner</div><div class="placeholderBox">This page is prepared for invoice photo scanning and UPC/qty/price extraction. Activity owner: <b>Manager</b>.</div></div>
+  </div>
+  <div id="tasksPage" class="hidden appPage">
+    <div class="sectionHeader"><div><div class="pageTitle">Daily Tasks</div><div class="sub">Manager task completion control.</div></div><button class="backBtn" onclick="showPage('home')">Home</button></div>
+    <div class="card"><div class="resultTitle">Task Tracking</div><div class="placeholderBox">Daily task checklist page is ready to add. Completed tasks will be recorded under: <b>Manager</b>.</div></div>
+  </div>
+  <div id="cigarettePage" class="hidden appPage">
+    <div class="sectionHeader"><div><div class="pageTitle">Cigarette Order</div><div class="sub">Cigarette and chew order page.</div></div><button class="backBtn" onclick="showPage('home')">Home</button></div>
+    <div class="card"><div class="resultTitle">Cigarette Order</div><div class="placeholderBox">This page is ready for Marlboro, Camel, Other Cigarettes, Chew, and exportable order sheets.</div></div>
+  </div>
+  <div id="reportsPage" class="hidden appPage">
+    <div class="sectionHeader"><div><div class="pageTitle">Manager Dashboard</div><div class="sub">Store activity and change tracking.</div></div><button class="backBtn" onclick="showPage('home')">Home</button></div>
+    <div class="statsGrid">
+      <div class="statCard"><div class="statNumber" id="statProducts">0</div><div class="statLabel">Products in pricebook</div></div>
+      <div class="statCard"><div class="statNumber" id="statChanges">0</div><div class="statLabel">Price changes pending</div></div>
+      <div class="statCard"><div class="statNumber" id="statCooler">0</div><div class="statLabel">Cooler shelves filled</div></div>
+      <div class="statCard"><div class="statNumber" id="statToday">0</div><div class="statLabel">Changes today</div></div>
+    </div>
+    <div class="card"><div class="resultTitle">Role Tracking</div><div class="roleList">
+      <div class="roleItem"><div><b>Who changed a price</b><div class="muted small">Saved in price change CSV</div></div><span class="roleBadge">Manager</span></div>
+      <div class="roleItem"><div><b>Who scanned an invoice</b><div class="muted small">Invoice scanner activity</div></div><span class="roleBadge">Manager</span></div>
+      <div class="roleItem"><div><b>Who stocked the cooler</b><div class="muted small">Cooler planogram / stocking activity</div></div><span class="roleBadge">Manager / Cashier</span></div>
+      <div class="roleItem"><div><b>Who completed tasks</b><div class="muted small">Daily task completion</div></div><span class="roleBadge">Manager</span></div>
+    </div></div>
+    <div class="card"><div class="resultTitle">Recent Price Changes</div><div id="managerChanges" class="muted">No changes yet.</div></div>
+  </div>
+  <div id="settingsPage" class="hidden appPage">
+    <div class="sectionHeader"><div><div class="pageTitle">Settings</div><div class="sub">App setup and export options.</div></div><button class="backBtn" onclick="showPage('home')">Home</button></div>
+    <div class="card"><div class="resultTitle">Amerimart App Settings</div><div class="placeholderBox">Current mode: <b>Manager</b>. Price changes are saved on this iPhone/browser until exported or cleared.</div></div>
   </div>
   <div class="bottomspace"></div>
 </div>
@@ -90,13 +166,18 @@ let current=null, stream=null, timer=null;
 let currentMatches=[];
 function money(n){ if(n===null||n===undefined||n==='') return ''; const x=Number(n); return isNaN(x)?String(n):'$'+x.toFixed(2); }
 function getChanges(){ try{return JSON.parse(localStorage.getItem('priceChanges')||'[]')}catch{return []} }
-function setChanges(a){ localStorage.setItem('priceChanges',JSON.stringify(a)); 
+function setChanges(a){ localStorage.setItem('priceChanges',JSON.stringify(a)); renderManagerDashboard(); 
 function showPage(page){
-  document.getElementById('pricePage').classList.toggle('hidden', page!=='price');
-  document.getElementById('planogramPage').classList.toggle('hidden', page!=='planogram');
-  document.getElementById('priceTab').classList.toggle('active', page==='price');
-  document.getElementById('planTab').classList.toggle('active', page==='planogram');
+  const pages=['home','price','planogram','inventory','invoice','tasks','cigarette','reports','settings'];
+  pages.forEach(name=>{
+    const pageEl=document.getElementById(name+'Page');
+    const tabEl=document.getElementById(name+'Tab');
+    if(pageEl) pageEl.classList.toggle('hidden', page!==name);
+    if(tabEl) tabEl.classList.toggle('active', page===name);
+  });
   if(page==='planogram') renderPlanogram();
+  if(page==='reports') renderManagerDashboard();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 function planKey(door,shelf){return `cooler_d${door}_s${shelf}`;}
 function renderPlanogram(){
@@ -249,7 +330,7 @@ function addPriceChange(p,newPrice){
   if(isNaN(np)){toast('Enter a valid price');return false}
   const old=Number(p.retailPrice||0);
   const changes=getChanges();
-  const entry={date:new Date().toLocaleString(),upc:p.upc,description:p.description,department:p.department,oldPrice:old.toFixed(2),newPrice:np.toFixed(2),difference:(np-old).toFixed(2),excelRow:p.row};
+  const entry={date:new Date().toLocaleString(),role:'Manager',upc:p.upc,description:p.description,department:p.department,oldPrice:old.toFixed(2),newPrice:np.toFixed(2),difference:(np-old).toFixed(2),excelRow:p.row};
   const idx=changes.findIndex(x=>x.upc===entry.upc);
   if(idx>=0) changes[idx]=entry; else changes.unshift(entry);
   p.retailPrice=np; setChanges(changes); return true;
@@ -281,12 +362,26 @@ function savePrice(){
 function renderChanges(){
  const c=getChanges(); const box=document.getElementById('changes');
  if(!c.length){box.innerHTML='<p class="muted">No price changes yet.</p>';return}
- box.innerHTML=c.map(x=>`<div class="listItem"><b>${escapeHtml(x.description)}</b><br><span class="muted">UPC ${escapeHtml(x.upc)} · Row ${x.excelRow}</span><br>${money(x.oldPrice)} → <span class="diff">${money(x.newPrice)}</span> <span class="muted">(${money(x.difference)})</span></div>`).join('');
+ box.innerHTML=c.map(x=>`<div class="listItem"><b>${escapeHtml(x.description)}</b><br><span class="muted">UPC ${escapeHtml(x.upc)} · Row ${x.excelRow} · ${escapeHtml(x.role||'Manager')}</span><br>${money(x.oldPrice)} → <span class="diff">${money(x.newPrice)}</span> <span class="muted">(${money(x.difference)})</span></div>`).join('');
 }
+
+function renderManagerDashboard(){
+  const changes=getChanges();
+  const today=new Date().toLocaleDateString();
+  const coolerCount=Array.from({length:6},(_,di)=>Array.from({length:7},(_,si)=>localStorage.getItem(planKey(di+1,si+1))||'')).flat().filter(Boolean).length;
+  const setText=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
+  setText('statProducts',(products||[]).length.toLocaleString());
+  setText('statChanges',changes.length);
+  setText('statCooler',coolerCount);
+  setText('statToday',changes.filter(x=>String(x.date||'').includes(today)).length);
+  const box=document.getElementById('managerChanges');
+  if(box){ box.innerHTML=changes.length ? changes.slice(0,8).map(x=>`<div class="listItem"><b>${escapeHtml(x.description)}</b><br><span class="muted">${escapeHtml(x.date)} · ${escapeHtml(x.role||'Manager')} · UPC ${escapeHtml(x.upc)}</span><br>${money(x.oldPrice)} → <span class="diff">${money(x.newPrice)}</span></div>`).join('') : 'No changes yet.'; }
+}
+
 function exportCSV(){
  const c=getChanges(); if(!c.length){toast('No changes to export');return}
- const headers=['Date','UPC','Description','Department','Old Price','New Price','Difference','Excel Row'];
- const rows=c.map(x=>[x.date,x.upc,x.description,x.department,x.oldPrice,x.newPrice,x.difference,x.excelRow]);
+ const headers=['Date','Role','UPC','Description','Department','Old Price','New Price','Difference','Excel Row'];
+ const rows=c.map(x=>[x.date,x.role||'Manager',x.upc,x.description,x.department,x.oldPrice,x.newPrice,x.difference,x.excelRow]);
  const csv=[headers,...rows].map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');
  const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a');
  a.href=url; a.download='price_changes_'+new Date().toISOString().slice(0,10)+'.csv'; a.click(); URL.revokeObjectURL(url);
