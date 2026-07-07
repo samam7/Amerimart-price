@@ -15,6 +15,8 @@
 <style>
 :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--text:#f8fafc;--accent:#14b8a6;--danger:#ef4444;--line:#334155;--ok:#22c55e}*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0f172a,#020617);color:var(--text);min-height:100vh}.wrap{max-width:760px;margin:auto;padding:16px 14px 96px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 16px}.brand{font-size:24px;font-weight:800;letter-spacing:-.02em}.sub{font-size:13px;color:var(--muted);margin-top:3px}.pill{background:#063b37;color:#99f6e4;border:1px solid #0f766e;border-radius:999px;padding:7px 10px;font-size:12px}.card{background:rgba(17,24,39,.92);border:1px solid var(--line);border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 30px rgba(0,0,0,.28)}label{display:block;color:#cbd5e1;font-size:13px;margin:8px 0 6px}input,button{width:100%;font-size:18px;border-radius:14px;border:1px solid var(--line);padding:14px;background:#020617;color:var(--text)}input:focus{outline:2px solid var(--accent);border-color:transparent}button{border:0;background:var(--accent);color:#042f2e;font-weight:800;margin-top:10px;cursor:pointer}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn2{background:#1e293b;color:#e2e8f0;border:1px solid #475569}.btnDanger{background:#7f1d1d;color:#fee2e2}.resultTitle{font-size:20px;font-weight:800;margin-bottom:8px}.price{font-size:36px;font-weight:900;color:#99f6e4}.meta{color:#cbd5e1;line-height:1.45}.muted{color:var(--muted)}.hidden{display:none!important}video{width:100%;border-radius:14px;background:#000;max-height:320px;object-fit:cover}.listItem{padding:10px 0;border-bottom:1px solid var(--line)}.listItem:last-child{border-bottom:0}.diff{font-weight:800;color:#fde68a}.fixedbar{position:fixed;bottom:0;left:0;right:0;background:rgba(2,6,23,.95);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr;gap:10px}.toast{position:fixed;left:14px;right:14px;bottom:86px;background:#052e2b;color:#ccfbf1;border:1px solid #0f766e;border-radius:14px;padding:12px;text-align:center;font-weight:700}.small{font-size:12px}.searchbox{display:flex;gap:8px}.searchbox input{flex:1}.searchbox button{width:auto;padding-left:18px;padding-right:18px;margin-top:0}.warn{background:#422006;border:1px solid #92400e;color:#fef3c7;border-radius:12px;padding:10px;margin-top:10px}.ok{color:#86efac}
 .installBox{background:rgba(20,184,166,.10);border:1px solid rgba(20,184,166,.45);border-radius:16px;padding:12px 14px;margin-top:14px;color:#ccfbf1}.installBox b{color:#fff}.installBox ol{margin:8px 0 0 18px;padding:0}.installBox li{margin:4px 0}.installBox .small{color:#bae6fd;font-size:12px;margin-top:8px}@media (min-width:900px){.wrap{max-width:900px}.grid2{grid-template-columns:1fr 1fr}}@media (max-width:520px){.brand{font-size:21px}.card{padding:14px}.row{grid-template-columns:1fr}.top{align-items:flex-start}.btn{width:100%}input{font-size:16px}.wrap{padding-left:10px;padding-right:10px}}
+
+.matchList{display:grid;gap:10px;margin-top:12px}.matchEdit{border:1px solid var(--line);border-radius:14px;padding:12px;background:#0b1220}.matchTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.matchName{font-weight:900}.matchMeta{font-size:12px;color:var(--muted);margin-top:4px}.matchPriceRow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:10px}.matchPriceRow label{font-size:11px;margin:0;color:#bae6fd}.matchPriceRow input{padding:12px;font-size:16px}.matchPriceRow button{padding:12px 14px}.saveAll{margin-top:12px;background:var(--ok);color:#052e16}.scanPreview{position:relative;width:100%;min-height:260px;background:#000;border-radius:14px;overflow:hidden;margin-top:10px}.scanPreview video,.scanPreview canvas{width:100%!important;max-height:360px!important;object-fit:cover!important;border-radius:14px}.scanLine{position:absolute;left:8%;right:8%;top:50%;height:3px;background:#14b8a6;box-shadow:0 0 18px #14b8a6;z-index:5}.scanReadout{font-size:13px;color:#ccfbf1;margin-top:8px}.cameraStatus{background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:8px;margin-top:8px;color:#bfdbfe;font-size:13px}@media(max-width:520px){.matchPriceRow{grid-template-columns:1fr 1fr}.matchPriceRow button{grid-column:1/3}}
 </style>
 </head>
 <body>
@@ -24,18 +26,9 @@
     <label>Scan barcode or search product name</label>
     <div class="searchbox"><input id="upcInput" inputmode="search" autocomplete="off" placeholder="Scan UPC or type product name"/><button onclick="lookup()">Search</button></div>
     <div class="row"><button class="btn2" onclick="startScanner()">Open Camera Scanner</button><button class="btn2" onclick="stopScanner()">Stop Camera</button></div>
-    <div id="scannerBox" class="hidden"><video id="video" playsinline muted></video><div class="warn small" id="scanNote">Point camera at barcode. If camera scanning is not supported on this iPhone browser, type/scan UPC into the box above.</div></div>
+    <div id="scannerBox" class="hidden"><div class="scanPreview" id="quaggaViewport"><video id="video" playsinline muted autoplay></video><div class="scanLine"></div></div><div class="scanReadout" id="lastScan">Last scan: none</div><div class="cameraStatus" id="scanNote">Tap Open Camera Scanner, allow camera, then point at the barcode.</div></div>
   </div>
   
-<div class="installBox" id="installHelp">
-  <b>Install like a real iPhone/iPad app</b>
-  <ol>
-    <li>Open this page in <b>Safari</b>.</li>
-    <li>Tap the <b>Share</b> button.</li>
-    <li>Tap <b>Add to Home Screen</b>.</li>
-  </ol>
-  <div class="small">After install, it opens full screen on iPhone, iPad, and web. Works offline after the first load.</div>
-</div>
 <div id="result" class="card hidden"></div>
   <div class="card"><div class="resultTitle">Changed Prices</div><div class="muted small">This list is saved on this iPhone/browser until you clear it. Export CSV and use it to update your back-office system.</div><div id="changes"></div></div>
 </div>
@@ -54,6 +47,7 @@ for (const p of products){
 }
 document.getElementById('countPill').textContent = products.length.toLocaleString()+ ' items';
 let current=null, stream=null, timer=null;
+let currentMatches=[];
 function money(n){ if(n===null||n===undefined||n==='') return ''; const x=Number(n); return isNaN(x)?String(n):'$'+x.toFixed(2); }
 function getChanges(){ try{return JSON.parse(localStorage.getItem('priceChanges')||'[]')}catch{return []} }
 function setChanges(a){ localStorage.setItem('priceChanges',JSON.stringify(a)); renderChanges(); }
@@ -91,21 +85,54 @@ function showProduct(p){
   box.innerHTML=`<div class="resultTitle">${escapeHtml(p.description||'No description')}</div><div class="meta">UPC: <b>${escapeHtml(p.upc)}</b><br>Department: ${escapeHtml(p.department||'')}<br>Package: ${escapeHtml(p.package||'')}</div><div class="price">${money(p.retailPrice)}</div><label>New retail price</label><input id="newPrice" inputmode="decimal" placeholder="Enter new price" value="${p.retailPrice ?? ''}"><button onclick="savePrice()">Save Price Change</button>`;
 }
 function showMatches(matches, term){
-  current=null;
+  current=null; currentMatches=matches;
   const box=document.getElementById('result'); box.classList.remove('hidden');
-  box.innerHTML=`<div class="resultTitle">${matches.length} Matches Found</div><div class="muted small">Search: ${escapeHtml(term)}. Tap the correct item.</div>` +
-    matches.map((p,i)=>`<button class="btn2" style="text-align:left;margin-top:8px" onclick="showProduct(products[${products.indexOf(p)}])"><b>${escapeHtml(p.description)}</b><br><span class="small">UPC ${escapeHtml(p.upc)} · ${escapeHtml(p.department||'')} · ${money(p.retailPrice)}</span></button>`).join('');
+  box.innerHTML=`<div class="resultTitle">${matches.length} Products Found</div>
+  <div class="muted small">Search: ${escapeHtml(term)}. Change prices here without going back.</div>
+  <button class="saveAll" onclick="saveAllVisiblePrices()">Save All Changed Prices</button>
+  <div class="matchList">` +
+    matches.map((p,i)=>`<div class="matchEdit" id="match_${i}">
+      <div class="matchTop"><div><div class="matchName">${escapeHtml(p.description)}</div><div class="matchMeta">UPC ${escapeHtml(p.upc)} · ${escapeHtml(p.department||'')} · Row ${escapeHtml(p.row||'')}</div></div><div class="pill">${money(p.retailPrice)}</div></div>
+      <div class="matchPriceRow">
+        <div><label>Current</label><input readonly value="${p.retailPrice ?? ''}"></div>
+        <div><label>New price</label><input id="matchPrice_${i}" inputmode="decimal" placeholder="New price" value="${p.retailPrice ?? ''}"></div>
+        <button onclick="saveMatchPrice(${i})">Save</button>
+      </div>
+    </div>`).join('') + `</div>`;
+}
+function addPriceChange(p,newPrice){
+  const np=Number(String(newPrice).replace(/[^0-9.]/g,''));
+  if(isNaN(np)){toast('Enter a valid price');return false}
+  const old=Number(p.retailPrice||0);
+  const changes=getChanges();
+  const entry={date:new Date().toLocaleString(),upc:p.upc,description:p.description,department:p.department,oldPrice:old.toFixed(2),newPrice:np.toFixed(2),difference:(np-old).toFixed(2),excelRow:p.row};
+  const idx=changes.findIndex(x=>x.upc===entry.upc);
+  if(idx>=0) changes[idx]=entry; else changes.unshift(entry);
+  p.retailPrice=np; setChanges(changes); return true;
+}
+function saveMatchPrice(i){
+  const p=currentMatches[i]; if(!p) return;
+  const inp=document.getElementById('matchPrice_'+i);
+  if(addPriceChange(p, inp.value)){
+    const card=document.getElementById('match_'+i);
+    if(card){card.style.borderColor='#22c55e'; card.querySelector('.pill').textContent=money(p.retailPrice);}
+    toast('Saved: '+p.description);
+  }
+}
+function saveAllVisiblePrices(){
+  let saved=0;
+  currentMatches.forEach((p,i)=>{
+    const inp=document.getElementById('matchPrice_'+i);
+    if(!inp) return;
+    const np=Number(String(inp.value).replace(/[^0-9.]/g,''));
+    if(!isNaN(np) && np !== Number(p.retailPrice||0)){ if(addPriceChange(p, inp.value)) saved++; }
+  });
+  toast(saved ? saved+' price changes saved' : 'No prices changed');
 }
 function savePrice(){
   if(!current) return;
-  const np=Number(document.getElementById('newPrice').value.replace(/[^0-9.]/g,''));
-  if(isNaN(np)){toast('Enter a valid price');return}
-  const old=Number(current.retailPrice||0);
-  const changes=getChanges();
-  const entry={date:new Date().toLocaleString(),upc:current.upc,description:current.description,department:current.department,oldPrice:old.toFixed(2),newPrice:np.toFixed(2),difference:(np-old).toFixed(2),excelRow:current.row};
-  const idx=changes.findIndex(x=>x.upc===entry.upc);
-  if(idx>=0) changes[idx]=entry; else changes.unshift(entry);
-  current.retailPrice=np; setChanges(changes); toast('Saved to change list'); lookup(current.upc);
+  const val=document.getElementById('newPrice').value;
+  if(addPriceChange(current,val)){ toast('Saved to change list'); lookup(current.upc); }
 }
 function renderChanges(){
  const c=getChanges(); const box=document.getElementById('changes');
@@ -122,56 +149,67 @@ function exportCSV(){
 }
 function clearChanges(){ if(confirm('Clear all saved price changes?')) setChanges([]); }
 async function startScanner(){
- const box=document.getElementById('scannerBox'), video=document.getElementById('video'), note=document.getElementById('scanNote');
+ const box=document.getElementById('scannerBox'), video=document.getElementById('video'), note=document.getElementById('scanNote'), last=document.getElementById('lastScan');
  box.classList.remove('hidden');
- note.innerHTML='Opening camera... If asked, tap Allow.';
- // 1) Try native BarcodeDetector first (Chrome/Android/desktop where available)
+ note.innerHTML='Opening camera... tap Allow if asked.';
+ last.textContent='Last scan: none';
+ // Always open a visible camera preview first, so you can see what it is scanning.
+ try{
+   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}, width:{ideal:1280}, height:{ideal:720}}, audio:false});
+   video.srcObject=stream; video.style.display='block'; await video.play();
+   note.innerHTML='Camera is open. Point the barcode inside the screen.';
+ }catch(e){
+   note.innerHTML='Camera could not open. On iPhone go to Settings → Safari → Camera → Allow. Also make sure the website starts with https.';
+   return;
+ }
+ // Native BarcodeDetector if browser supports it.
  if('BarcodeDetector' in window){
   try{
    const detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']});
-   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); video.srcObject=stream; await video.play();
-   note.innerHTML='Point camera at the barcode.';
-   timer=setInterval(async()=>{ try{ const codes=await detector.detect(video); if(codes.length){ const code=codes[0].rawValue; document.getElementById('upcInput').value=code; lookup(code); toast('Scanned '+code); stopScanner(); } }catch(e){} },500);
+   timer=setInterval(async()=>{
+    try{ const codes=await detector.detect(video); if(codes.length){ handleScannedCode(codes[0].rawValue); } }catch(e){}
+   },450);
    return;
-  }catch(e){ console.log('BarcodeDetector failed, trying Quagga fallback', e); }
+  }catch(e){ console.log('BarcodeDetector not usable, trying Quagga', e); }
  }
- // 2) Safari/iPhone fallback scanner using Quagga2
+ // Quagga fallback for iPhone Safari.
  if(window.Quagga){
   try{
-   video.style.display='none';
+   // stop preview stream so Quagga can take the camera and show its own visible live view
+   if(stream){stream.getTracks().forEach(t=>t.stop()); stream=null; video.srcObject=null; video.style.display='none';}
+   const viewport=document.getElementById('quaggaViewport');
    note.innerHTML='Safari scanner ready. Hold barcode steady in good light.';
    Quagga.init({
-    inputStream:{
-      type:'LiveStream',
-      target:box,
-      constraints:{facingMode:'environment', width:{ideal:1280}, height:{ideal:720}}
-    },
+    inputStream:{type:'LiveStream', target:viewport, constraints:{facingMode:'environment', width:{ideal:1280}, height:{ideal:720}}},
     locator:{patchSize:'medium', halfSample:true},
     numOfWorkers:0,
     frequency:10,
     locate:true,
     decoder:{readers:['upc_reader','upc_e_reader','ean_reader','ean_8_reader','code_128_reader']}
    }, function(err){
-    if(err){ note.innerHTML='Camera could not open. In iPhone Settings, allow Safari Camera permission. You can still type or use a Bluetooth scanner.'; console.log(err); return; }
+    if(err){ note.innerHTML='Scanner opened camera problem. Try Safari directly, not Chrome. Check iPhone Settings → Safari → Camera → Allow.'; console.log(err); return; }
     Quagga.start();
    });
-   let lastCode='', lastTime=0;
    Quagga.offDetected();
    Quagga.onDetected(function(data){
      const code=data && data.codeResult && data.codeResult.code ? String(data.codeResult.code) : '';
-     if(!code) return;
-     const now=Date.now();
-     if(code===lastCode && now-lastTime<1500) return;
-     lastCode=code; lastTime=now;
-     document.getElementById('upcInput').value=code;
-     lookup(code);
-     toast('Scanned '+code);
-     stopScanner();
+     if(code) handleScannedCode(code);
    });
    return;
   }catch(e){ console.log('Quagga failed', e); }
  }
- note.innerHTML='Camera scanner library did not load. Make sure the iPhone has internet for the first load, then refresh the page.';
+ note.innerHTML='Scanner library did not load. Refresh once with internet, or type/search by product name.';
+}
+let lastScannedCode='', lastScannedTime=0;
+function handleScannedCode(code){
+ const now=Date.now(); code=String(code||'').trim(); if(!code) return;
+ if(code===lastScannedCode && now-lastScannedTime<1600) return;
+ lastScannedCode=code; lastScannedTime=now;
+ document.getElementById('lastScan').textContent='Last scan: '+code;
+ document.getElementById('upcInput').value=code;
+ lookup(code);
+ toast('Scanned '+code);
+ // Keep camera open for continuous scanning. Press Stop Camera when done.
 }
 function stopScanner(){
  try{ if(window.Quagga) Quagga.stop(); }catch(e){}
