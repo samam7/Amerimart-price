@@ -24,7 +24,7 @@
   <div class="top"><div><div class="brand">Amerimart Price Check</div><div class="sub">Scan UPC or product name → check price → save new price</div></div><div class="pill" id="countPill">Loading…</div></div>
   <div class="card">
     <label>Scan barcode or search product name</label>
-    <div class="searchbox"><input id="upcInput" inputmode="search" autocomplete="off" placeholder="Scan UPC or type product name"/><button onclick="lookup()">Search</button></div>
+    <div class="searchbox"><input id="upcInput" inputmode="search" autocomplete="off" placeholder="Scan UPC or type product name" onkeydown="if(event.key==='Enter') lookup()" oninput="liveSearchInput()"/><button onclick="lookup()">Search</button></div>
     <div class="row"><button class="btn2" onclick="startScanner()">Open Camera Scanner</button><button class="btn2" onclick="stopScanner()">Stop Camera</button></div>
     <div id="scannerBox" class="hidden"><div class="scanPreview" id="quaggaViewport"><video id="video" playsinline muted autoplay></video><div class="scanLine"></div></div><div class="scanReadout" id="lastScan">Last scan: none</div><div class="cameraStatus" id="scanNote">Tap Open Camera Scanner, allow camera, then point at the barcode.</div></div>
   </div>
@@ -59,42 +59,93 @@ function money(n){ if(n===null||n===undefined||n==='') return ''; const x=Number
 function getChanges(){ try{return JSON.parse(localStorage.getItem('priceChanges')||'[]')}catch{return []} }
 function setChanges(a){ localStorage.setItem('priceChanges',JSON.stringify(a)); renderChanges(); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),1800); }
+
+let liveSearchTimer=null;
+function liveSearchInput(){
+  clearTimeout(liveSearchTimer);
+  const v=document.getElementById('upcInput').value.trim();
+  if(v.length<3) return;
+  liveSearchTimer=setTimeout(()=>lookup(),350);
+}
+function commonPrefixLen(a,b){
+  a=String(a||''); b=String(b||''); let i=0;
+  while(i<a.length && i<b.length && a[i]===b[i]) i++;
+  return i;
+}
+function closestUpcMatches(raw){
+  raw=String(raw||'').replace(/[^0-9]/g,'');
+  if(raw.length < 6) return [];
+  const rawNoZero=raw.replace(/^0+/,'');
+  const scored=[];
+  for(const p of products){
+    const u=String(p.upc||'').replace(/[^0-9]/g,'');
+    if(!u) continue;
+    const uNoZero=u.replace(/^0+/,'');
+    let score=0;
+    // Common pricebook issue: Excel UPC is missing the last check digit.
+    if(raw.slice(0,-1)===u || rawNoZero.slice(0,-1)===uNoZero) score=100;
+    else if(raw===u || rawNoZero===uNoZero) score=100;
+    else if(raw.startsWith(u) || u.startsWith(raw) || rawNoZero.startsWith(uNoZero) || uNoZero.startsWith(rawNoZero)) score=85 + Math.min(u.length, raw.length)/20;
+    else {
+      const cp=Math.max(commonPrefixLen(raw,u), commonPrefixLen(rawNoZero,uNoZero));
+      const cs=Math.max(commonPrefixLen(raw.split('').reverse().join(''),u.split('').reverse().join('')), commonPrefixLen(rawNoZero.split('').reverse().join(''),uNoZero.split('').reverse().join('')));
+      if(cp>=8) score=70+cp;
+      else if(cp>=6 && cs>=2) score=60+cp+cs;
+    }
+    if(score>0) scored.push([score,p]);
+  }
+  const seen=new Set();
+  return scored.sort((a,b)=>b[0]-a[0]).map(x=>x[1]).filter(p=>{if(seen.has(p.upc)) return false; seen.add(p.upc); return true;}).slice(0,25);
+}
 function lookup(code){
   const input=document.getElementById('upcInput');
   const val=String(code||input.value||'').trim();
   const raw=val.replace(/[^0-9]/g,'');
   const box=document.getElementById('result'); box.classList.remove('hidden');
 
-  // Barcode / UPC exact search first
+  // Barcode / UPC exact search first. Includes with/without leading zero.
   if(raw.length >= 4){
     const p=upcVariants(raw).map(v=>byUpc.get(v)).find(Boolean);
     if(p){ showProduct(p); return; }
+
+    // If no exact match, show close UPC matches instead of dead end.
+    const close=closestUpcMatches(raw);
+    if(close.length===1){ showProduct(close[0]); return; }
+    if(close.length>1){ showMatches(close, val, 'Closest UPC Matches'); return; }
   }
 
-  // Product name search
+  // Product name search. Every word must match description/department/UPC.
   const q=val.toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
   if(q.length >= 2){
     const words=q.split(' ').filter(Boolean);
-    let matches=products.filter(p=>{
-      const text=((p.description||'')+' '+(p.department||'')+' '+(p.upc||'')).toLowerCase();
-      return words.every(w=>text.includes(w));
-    }).slice(0,50);
+    let matches=products.map(p=>{
+      const desc=String(p.description||'').toLowerCase();
+      const dept=String(p.department||'').toLowerCase();
+      const upc=String(p.upc||'').toLowerCase();
+      const text=desc+' '+dept+' '+upc;
+      if(!words.every(w=>text.includes(w))) return null;
+      let score=0;
+      if(desc===q) score+=100;
+      if(desc.startsWith(q)) score+=50;
+      for(const w of words){ if(desc.includes(w)) score+=15; if(dept.includes(w)) score+=5; if(upc.includes(w)) score+=5; }
+      return [score,p];
+    }).filter(Boolean).sort((a,b)=>b[0]-a[0]).map(x=>x[1]).slice(0,75);
     if(matches.length===1){ showProduct(matches[0]); return; }
-    if(matches.length>1){ showMatches(matches, val); return; }
+    if(matches.length>1){ showMatches(matches, val, 'Products Found'); return; }
   }
 
   current=null;
-  box.innerHTML=`<div class="resultTitle">Not Found</div><div class="muted">Search: ${escapeHtml(val||'(empty)')}</div><div class="warn">This barcode was not found in the Excel pricebook. Try searching by product name, for example <b>Tito</b>, <b>Zyn</b>, <b>Monster</b>, or <b>Marlboro</b>. Some bottles use a barcode that is different from the UPC saved in Excel.</div>`;
+  box.innerHTML=`<div class="resultTitle">Not Found</div><div class="muted">Search: ${escapeHtml(val||'(empty)')}</div><div class="warn">No match found. Try scanning again, typing only part of the UPC, or search by product name like <b>Zyn Peppermint</b>, <b>Tito</b>, <b>Monster</b>, or <b>Marlboro</b>.</div>`;
 }
 function showProduct(p){
   current=p; document.getElementById('upcInput').value=p.upc;
   const box=document.getElementById('result'); box.classList.remove('hidden');
   box.innerHTML=`<div class="resultTitle">${escapeHtml(p.description||'No description')}</div><div class="meta">UPC: <b>${escapeHtml(p.upc)}</b><br>Department: ${escapeHtml(p.department||'')}<br>Package: ${escapeHtml(p.package||'')}</div><div class="price">${money(p.retailPrice)}</div><label>New retail price</label><input id="newPrice" inputmode="decimal" placeholder="Enter new price" value="${p.retailPrice ?? ''}"><button onclick="savePrice()">Save Price Change</button>`;
 }
-function showMatches(matches, term){
+function showMatches(matches, term, title='Products Found'){
   current=null; currentMatches=matches;
   const box=document.getElementById('result'); box.classList.remove('hidden');
-  box.innerHTML=`<div class="resultTitle">${matches.length} Products Found</div>
+  box.innerHTML=`<div class="resultTitle">${matches.length} ${escapeHtml(title)}</div>
   <div class="muted small">Search: ${escapeHtml(term)}. Change prices here without going back.</div>
   <button class="saveAll" onclick="saveAllVisiblePrices()">Save All Changed Prices</button>
   <div class="matchList">` +
