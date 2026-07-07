@@ -17,11 +17,15 @@
 .installBox{background:rgba(20,184,166,.10);border:1px solid rgba(20,184,166,.45);border-radius:16px;padding:12px 14px;margin-top:14px;color:#ccfbf1}.installBox b{color:#fff}.installBox ol{margin:8px 0 0 18px;padding:0}.installBox li{margin:4px 0}.installBox .small{color:#bae6fd;font-size:12px;margin-top:8px}@media (min-width:900px){.wrap{max-width:900px}.grid2{grid-template-columns:1fr 1fr}}@media (max-width:520px){.brand{font-size:21px}.card{padding:14px}.row{grid-template-columns:1fr}.top{align-items:flex-start}.btn{width:100%}input{font-size:16px}.wrap{padding-left:10px;padding-right:10px}}
 
 .matchList{display:grid;gap:10px;margin-top:12px}.matchEdit{border:1px solid var(--line);border-radius:14px;padding:12px;background:#0b1220}.matchTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.matchName{font-weight:900}.matchMeta{font-size:12px;color:var(--muted);margin-top:4px}.matchPriceRow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:10px}.matchPriceRow label{font-size:11px;margin:0;color:#bae6fd}.matchPriceRow input{padding:12px;font-size:16px}.matchPriceRow button{padding:12px 14px}.saveAll{margin-top:12px;background:var(--ok);color:#052e16}.scanPreview{position:relative;width:100%;min-height:280px;background:#000;border-radius:14px;overflow:hidden;margin-top:10px}.scanPreview video,.scanPreview canvas{width:100%!important;min-height:280px!important;max-height:380px!important;object-fit:cover!important;border-radius:14px;display:block!important}.scanLine{position:absolute;left:8%;right:8%;top:50%;height:3px;background:#14b8a6;box-shadow:0 0 18px #14b8a6;z-index:5}.scanReadout{font-size:13px;color:#ccfbf1;margin-top:8px}.cameraStatus{background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:8px;margin-top:8px;color:#bfdbfe;font-size:13px}@media(max-width:520px){.matchPriceRow{grid-template-columns:1fr 1fr}.matchPriceRow button{grid-column:1/3}}
+
+.pageTabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 14px}.tabBtn{background:#1e293b;color:#e2e8f0;border:1px solid #475569;margin:0}.tabBtn.active{background:var(--accent);color:#042f2e}.planHead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.doorGrid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px}.doorCard{border:1px solid var(--line);border-radius:16px;background:#0b1220;padding:12px}.doorTitle{font-weight:900;font-size:18px;margin-bottom:8px;color:#ccfbf1}.shelfRow{display:grid;grid-template-columns:68px 1fr;gap:8px;align-items:center;margin:8px 0}.shelfLabel{color:#bae6fd;font-size:13px;font-weight:800}.shelfRow input{padding:11px;font-size:15px}.planActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.planActions button{margin-top:0}.doorTools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.doorTools button{font-size:14px;padding:10px;margin:0}@media(min-width:760px){.doorGrid{grid-template-columns:1fr 1fr}}@media(max-width:520px){.pageTabs{grid-template-columns:1fr}.shelfRow{grid-template-columns:58px 1fr}.planActions{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top"><div><div class="brand">Amerimart Price Check</div><div class="sub">Scan barcode exact item · name search shows list</div></div><div class="pill" id="countPill">Loading…</div></div>
+  <div class="pageTabs"><button id="priceTab" class="tabBtn active" onclick="showPage('price')">Price Check</button><button id="planTab" class="tabBtn" onclick="showPage('planogram')">Cooler Planogram</button></div>
+  <div id="pricePage">
   <div class="card">
     <label>Scan barcode or type product name</label>
     <div class="searchbox"><input id="upcInput" inputmode="search" autocomplete="off" placeholder="Scan UPC for exact item or type name for list" onkeydown="if(event.key==='Enter') lookup()" oninput="liveSearchInput()"/><button onclick="lookup()">Search</button></div>
@@ -31,6 +35,25 @@
   
 <div id="result" class="card hidden"></div>
   <div class="card"><div class="resultTitle">Changed Prices</div><div class="muted small">This list is saved on this iPhone/browser until you clear it. Export CSV and use it to update your back-office system.</div><div id="changes"></div><div class="actionbar"><button onclick="exportCSV()">Export Change CSV</button><button class="btnDanger" onclick="clearChanges()">Clear List</button></div></div>
+
+  </div>
+  <div id="planogramPage" class="hidden">
+    <div class="card">
+      <div class="planHead">
+        <div>
+          <div class="resultTitle">Cooler Planogram</div>
+          <div class="muted small">Set product locations by door and shelf. Saved on this device/browser.</div>
+        </div>
+        <div class="pill">6 doors · 7 shelves</div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button onclick="savePlanogram()">Save Planogram</button>
+        <button class="btn2" onclick="exportPlanogramCSV()">Export Planogram CSV</button>
+      </div>
+      <button class="btnDanger" onclick="clearPlanogram()">Clear Planogram</button>
+    </div>
+    <div id="planogramGrid" class="doorGrid"></div>
+  </div>
   <div class="bottomspace"></div>
 </div>
 <div id="toast" class="toast hidden"></div>
@@ -42,11 +65,21 @@ const products = window.PRICEBOOK_PRODUCTS || [];
 const byUpc = new Map();
 function upcVariants(v){
   const raw=String(v||'').replace(/[^0-9]/g,'');
-  const noZero=raw.replace(/^0+/,'');
-  const set=new Set([raw,noZero]);
-  if(raw.length===11) set.add('0'+raw);
-  if(raw.length===12) set.add('0'+raw);
-  if(raw.length===13 && raw.startsWith('0')) set.add(raw.slice(1));
+  const set=new Set();
+  function add(x){
+    x=String(x||'').replace(/[^0-9]/g,'');
+    if(!x) return;
+    set.add(x);
+    set.add(x.replace(/^0+/,''));
+    if(x.length===11) set.add('0'+x);
+    if(x.length===12) set.add('0'+x);
+    if(x.length===13 && x.startsWith('0')) set.add(x.slice(1));
+  }
+  add(raw);
+  // Some iPhone scans read the 12th/13th check digit, while the Excel pricebook
+  // sometimes stores the UPC without that final digit. Try that variation too,
+  // but still return only ONE exact product for barcode scans.
+  if(raw.length>=8) add(raw.slice(0,-1));
   return [...set].filter(Boolean);
 }
 for (const p of products){
@@ -57,7 +90,58 @@ let current=null, stream=null, timer=null;
 let currentMatches=[];
 function money(n){ if(n===null||n===undefined||n==='') return ''; const x=Number(n); return isNaN(x)?String(n):'$'+x.toFixed(2); }
 function getChanges(){ try{return JSON.parse(localStorage.getItem('priceChanges')||'[]')}catch{return []} }
-function setChanges(a){ localStorage.setItem('priceChanges',JSON.stringify(a)); renderChanges(); }
+function setChanges(a){ localStorage.setItem('priceChanges',JSON.stringify(a)); 
+function showPage(page){
+  document.getElementById('pricePage').classList.toggle('hidden', page!=='price');
+  document.getElementById('planogramPage').classList.toggle('hidden', page!=='planogram');
+  document.getElementById('priceTab').classList.toggle('active', page==='price');
+  document.getElementById('planTab').classList.toggle('active', page==='planogram');
+  if(page==='planogram') renderPlanogram();
+}
+function planKey(door,shelf){return `cooler_d${door}_s${shelf}`;}
+function renderPlanogram(){
+  const grid=document.getElementById('planogramGrid'); if(!grid) return;
+  let html='';
+  for(let d=1; d<=6; d++){
+    html += `<div class="doorCard"><div class="doorTitle">Door ${d}</div>`;
+    for(let s=1; s<=7; s++){
+      const val=localStorage.getItem(planKey(d,s))||'';
+      html += `<div class="shelfRow"><div class="shelfLabel">Shelf ${s}</div><input id="plan_${d}_${s}" placeholder="Example: Coke 20oz, Pepsi, Monster" value="${escapeHtml(val)}"></div>`;
+    }
+    html += `<div class="doorTools"><button class="btn2" onclick="copyDoor(${d})">Copy Door</button><button class="btn2" onclick="clearDoor(${d})">Clear Door</button></div></div>`;
+  }
+  grid.innerHTML=html;
+}
+function savePlanogram(){
+  for(let d=1; d<=6; d++){ for(let s=1; s<=7; s++){ const el=document.getElementById(`plan_${d}_${s}`); if(el) localStorage.setItem(planKey(d,s), el.value.trim()); }}
+  showToast('Cooler planogram saved');
+}
+function clearDoor(d){
+  if(!confirm(`Clear Door ${d}?`)) return;
+  for(let s=1; s<=7; s++){localStorage.removeItem(planKey(d,s));}
+  renderPlanogram(); showToast(`Door ${d} cleared`);
+}
+function copyDoor(d){
+  let lines=[];
+  for(let s=1; s<=7; s++){ const el=document.getElementById(`plan_${d}_${s}`); lines.push(`Door ${d} Shelf ${s}: ${(el&&el.value)||''}`); }
+  navigator.clipboard?.writeText(lines.join('\n')); showToast(`Door ${d} copied`);
+}
+function clearPlanogram(){
+  if(!confirm('Clear the full cooler planogram?')) return;
+  for(let d=1; d<=6; d++){ for(let s=1; s<=7; s++){ localStorage.removeItem(planKey(d,s)); }}
+  renderPlanogram(); showToast('Planogram cleared');
+}
+function exportPlanogramCSV(){
+  savePlanogram();
+  const rows=[['Door','Shelf','Products']];
+  for(let d=1; d<=6; d++){ for(let s=1; s<=7; s++){ rows.push([d,s,localStorage.getItem(planKey(d,s))||'']); }}
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='amerimart_cooler_planogram.csv'; a.click(); URL.revokeObjectURL(url);
+}
+
+renderChanges();
+renderPlanogram(); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),1800); }
 
 let liveSearchTimer=null;
@@ -111,7 +195,7 @@ function lookup(code){
     const p=upcVariants(raw).map(v=>byUpc.get(v)).find(Boolean);
     if(p){ showProduct(p); return; }
     current=null;
-    box.innerHTML=`<div class="resultTitle">Barcode Not Found</div><div class="muted">Scanned/Search: ${escapeHtml(val||'(empty)')}</div><div class="warn">This barcode was not found as an exact UPC in the Excel pricebook. For a product list, search by name like <b>Zyn</b>, <b>Tito</b>, <b>Monster</b>, or <b>Marlboro</b>.</div>`;
+    box.innerHTML=`<div class="resultTitle">Barcode Not Found</div><div class="muted">Scanned/Search: ${escapeHtml(val||'(empty)')}</div><div class="warn">This barcode was not found in the Excel pricebook, even after checking leading zero and check-digit variations. For a product list, search by name like <b>Zyn</b>, <b>Tito</b>, <b>Monster</b>, or <b>Marlboro</b>.</div>`;
     return;
   }
 

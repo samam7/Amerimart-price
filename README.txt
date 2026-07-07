@@ -14,3 +14,6 @@ UPLOAD
 
 NOTE
 If a scanned barcode is still not found, search by the product name. That means the exact scanned barcode is not in your Excel pricebook.
+
+
+NEW: Cooler Planogram page added. Use the tab at the top to save products by cooler door and shelf. Export CSV for printing or sharing.
