@@ -1,10 +1,9 @@
-Amerimart Price Check - Multi Product Price Edit + Safari Camera Preview
+Amerimart Price Check - Multi Edit + Camera/Layout Fix
 
-NEW:
-- Search by product name such as Zyn and edit multiple products on the same screen.
-- Save each item or Save All Changed Prices.
-- Camera preview stays visible so you can see what the iPhone is scanning.
-- Continuous scanning stays open until you tap Stop Camera.
-- Install to iPhone/iPad Home Screen with GitHub Pages.
+Changes:
+- Export/Clear buttons no longer float over product list.
+- Search by product name and edit multiple products on one screen.
+- iPhone Safari camera preview uses ZXing fallback and stays visible while scanning.
+- Full pricebook is inside index.html.
 
-Upload all files to GitHub Pages and replace the old files.
+Upload all files to GitHub Pages and replace old files. Then refresh Safari. If Home Screen app still shows old version, delete old Home Screen icon and add it again.
