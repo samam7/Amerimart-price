@@ -1,9 +1,16 @@
-Amerimart Price Check - Multi Edit + Camera/Layout Fix
+Amerimart Price Check - Final Layout + UPC Search Fix
 
-Changes:
-- Export/Clear buttons no longer float over product list.
-- Search by product name and edit multiple products on one screen.
-- iPhone Safari camera preview uses ZXing fallback and stays visible while scanning.
-- Full pricebook is inside index.html.
+WHAT CHANGED
+- Search supports UPC with or without leading zero.
+- Product name search works for multiple products like Zyn or Tito.
+- Export/Clear buttons are inside Changed Prices and no longer float over the Safari bar.
+- Better Not Found message for barcodes not saved in Excel.
 
-Upload all files to GitHub Pages and replace old files. Then refresh Safari. If Home Screen app still shows old version, delete old Home Screen icon and add it again.
+UPLOAD
+1. Delete/replace old files in GitHub.
+2. Upload all files from this folder.
+3. Commit changes.
+4. Open Safari and refresh the GitHub Pages link.
+
+NOTE
+If a scanned barcode is still not found, search by the product name. That means the exact scanned barcode is not in your Excel pricebook.
